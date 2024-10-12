@@ -181,6 +181,18 @@ def game_loop():
             player_group.update()
             projectiles.update()
             enemies.update()
+            # Check for collision between player and enemy tanks
+            if pygame.sprite.spritecollideany(player, enemies):
+                game_over = True
+
+            # Check for projectile and enemy collisions
+            for projectile in projectiles:
+                hit_enemies = pygame.sprite.spritecollide(projectile, enemies, False)
+                for enemy in hit_enemies:
+                    if enemy.hit():  # Reduce enemy health and check if it was killed
+                        score += 10  # Increment score for killing an enemy
+                        projectile.kill()  # Destroy the projectile on hit
+                        break  # Break after the first hit to prevent multiple kills with one projectile
 
 
 
