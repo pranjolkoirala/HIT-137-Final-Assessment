@@ -38,9 +38,43 @@ class PlayerTank(pygame.sprite.Sprite):
         self.image_up = pygame.transform.scale(self.image_up, (50, 30))
         self.image_down = pygame.transform.scale(self.image_down, (50, 30))
 
+        self.image = self.image_right  # Set the initial image
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+        self.speed = 5
+        self.health = 100
+        self.lives = 3
+        self.direction = (1, 0)  # Initially facing right
+
 
     def update(self):
         keys = pygame.key.get_pressed()
+        if keys[pygame.K_LEFT]:
+            self.rect.x -= self.speed
+            self.direction = (-1, 0)  # Facing left
+            self.image = self.image_left  # Set image to left-facing tank
+        elif keys[pygame.K_RIGHT]:
+            self.rect.x += self.speed
+            self.direction = (1, 0)  # Facing right
+            self.image = self.image_right  # Set image to right-facing tank
+        elif keys[pygame.K_UP]:
+            self.rect.y -= self.speed
+            self.direction = (0, -1)  # Facing up
+            self.image = self.image_up  # Set image to up-facing tank
+        elif keys[pygame.K_DOWN]:
+            self.rect.y += self.speed
+            self.direction = (0, 1)  # Facing down
+            self.image = self.image_down  # Set image to down-facing tank
+
+        # Prevent the tank from moving out of the screen
+        if self.rect.left < 0:
+            self.rect.left = 0
+        if self.rect.right > SCREEN_WIDTH:
+            self.rect.right = SCREEN_WIDTH
+        if self.rect.top < 0:
+            self.rect.top = 0
+        if self.rect.bottom > SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
       
 
 
@@ -65,5 +99,58 @@ class Projectile(pygame.sprite.Sprite):
             self.kill()
 
 
+def game_loop():
+    # Initialize variables for level management
+    enemies_killed = 0    
+    player = PlayerTank(100, SCREEN_HEIGHT - 50)
+    player_group = pygame.sprite.Group(player)
 
+    projectiles = pygame.sprite.Group()
+    boss = None
+
+    score = 0
+    running = True
+    game_over = False
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if not game_over and event.key == pygame.K_SPACE:
+                    # Create a projectile that fires in the direction the tank is facing
+                    projectile = Projectile(player.rect.centerx, player.rect.centery, player.direction)
+                    projectiles.add(projectile)
+
+        
+
+        if not game_over:
+            # Update game objects
+            player_group.update()
+            projectiles.update()
+
+
+
+        # Draw everything
+        screen.fill(BLACK)  # Clear screen with black color
+        player_group.draw(screen)
+        projectiles.draw(screen)
+
+        # Display score
+        font = pygame.font.Font(None, 36)
+        score_text = font.render(f'Score: {score}', True, WHITE)
+        screen.blit(score_text, (10, 10))
+
+        # Display game over message
+        if game_over:
+            game_over_text = font.render('Game Over! Press R to Restart', True, WHITE)
+            screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
+
+        pygame.display.flip()  # Update the display
+        clock.tick(FPS)  # Limit frame rate
+
+    pygame.quit()
+
+
+game_loop()
 
