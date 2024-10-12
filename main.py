@@ -78,6 +78,53 @@ class PlayerTank(pygame.sprite.Sprite):
       
 
 
+class EnemyTank(pygame.sprite.Sprite):
+    def __init__(self, x, y, level):
+        super().__init__()
+        # Load enemy tank images
+        self.image_normal = pygame.image.load('./images/enemy.png').convert_alpha()
+        self.image_weak = pygame.image.load('./images/enemy_weak.png').convert_alpha()
+        
+        self.image = pygame.transform.scale(self.image_normal, (50, 30))  # Scale the normal image
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
+
+        self.speed = 3 + level  # Increase speed based on level
+        self.health = 1 if level == 1 else 2  # 1 hit to kill in level 1, 2 hits in level 2
+
+        # Random initial movement direction
+        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # right, left, down, up
+        self.change_direction_timer = 0  # Timer to change direction
+
+    def update(self):
+        # Change direction randomly after a set time
+        self.change_direction_timer += 1
+        if self.change_direction_timer > random.randint(30, 90):  # Change direction every 30 to 90 frames
+            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
+            self.change_direction_timer = 0
+
+        # Update position based on direction
+        self.rect.x += self.direction[0] * self.speed
+        self.rect.y += self.direction[1] * self.speed
+
+        # Prevent the enemy from moving out of the screen
+        if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.direction = (-self.direction[0], self.direction[1])  # Reverse direction on x-axis
+        if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
+            self.direction = (self.direction[0], -self.direction[1])  # Reverse direction on y-axis
+
+    def hit(self):
+        """Decrease health and return True if enemy is killed."""
+        self.health -= 1
+        if self.health <= 0:
+            self.kill()  # Remove enemy if health is 0
+            return True  # Indicate that the enemy was killed
+        else:
+            # Change to the weak enemy image when hit once
+            self.image = pygame.transform.scale(self.image_weak, (50, 30))  # Scale the weak image
+            return False  # Indicate that the enemy is still alive
+
+
 
 
 class Projectile(pygame.sprite.Sprite):
@@ -106,7 +153,12 @@ def game_loop():
     player_group = pygame.sprite.Group(player)
 
     projectiles = pygame.sprite.Group()
+    enemies = pygame.sprite.Group()
     boss = None
+
+    for _ in range(5):
+        enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), 1)
+        enemies.add(enemy)
 
     score = 0
     running = True
@@ -128,6 +180,7 @@ def game_loop():
             # Update game objects
             player_group.update()
             projectiles.update()
+            enemies.update()
 
 
 
@@ -135,6 +188,7 @@ def game_loop():
         screen.fill(BLACK)  # Clear screen with black color
         player_group.draw(screen)
         projectiles.draw(screen)
+        enemies.draw(screen)
 
         # Display score
         font = pygame.font.Font(None, 36)
