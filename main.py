@@ -61,7 +61,7 @@ def game_loop():
     game_over = False
     # Create initial enemies for level 1
     for _ in range(total_enemies):
-        enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level)
+        enemy = EnemyTank( level)
         enemies.add(enemy)
 
     
@@ -85,11 +85,11 @@ def game_loop():
                     level = 3
                     total_enemies = enemies_per_level_3
                     enemies.empty()  # Clear any existing enemies
-                    boss = BossEnemy(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level, boss_hits_required)  # Create the boss
+                    boss = BossEnemy( level, boss_hits_required)  # Create the boss
                     enemies.add(boss)  # Add boss to enemies
                     # Create additional regular enemies for level 3
                     for _ in range(total_enemies - 1):  # One less for the boss
-                        enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level)
+                        enemy = EnemyTank( level)
                         enemies.add(enemy)
 
                 # Restart the game if game over and player presses R
@@ -135,11 +135,11 @@ def game_loop():
                     enemies.empty()  # Clear any existing enemies
                     # Create new enemies for the next level
                     for _ in range(total_enemies):
-                        enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level)
+                        enemy = EnemyTank( level)
                         enemies.add(enemy)
                     if level==3:
                         # if its level 3, add a boss
-                        boss = BossEnemy(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level, boss_hits_required) 
+                        boss = BossEnemy( level, boss_hits_required) 
                         enemies.add(boss)
                 else:
                     GAME_OVER_TEXT= "Congratulations!! Press R to start again"

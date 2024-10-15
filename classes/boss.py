@@ -3,8 +3,8 @@ import random
 from constant import SCREEN_WIDTH, SCREEN_HEIGHT
 from classes.enemy import EnemyTank
 class BossEnemy(EnemyTank):
-    def __init__(self, x, y, level, hits_required):
-        super().__init__(x, y, level)
+    def __init__(self, level, hits_required):
+        super().__init__( level)
         self.image.fill((0, 0, 255))  # Different color (blue) for the boss
         self.speed = 3 + level  # Boss speed
         self.health = hits_required  # Set health based on hits required

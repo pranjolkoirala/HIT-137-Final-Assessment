@@ -1,6 +1,6 @@
 # Screen dimensions
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 750
 
 FPS = 60
 
@@ -13,7 +13,7 @@ YELLOW = (255, 255, 0)
 
 # Coordinates should be less than SCREEN_WIDTH and SCREEN_HEIGHT.
 # The dimension of the obstacle is 50x50
-OBSTACLE_COORDINATES= [[150, 300],[200, 300],[250, 300],[550, 300],[600, 300],[650, 300],[400, 100],[400, 150],[400, 450],[400, 500]]
+OBSTACLE_COORDINATES= [[200, 300],[250, 300],[300, 300],[600, 300],[650, 300],[700, 300],[450, 100],[450, 150],[450, 450],[450, 500]]
 
 # Number of Enemies for each level
 ENEMIES_IN_LEVEL_1 = 2
