@@ -17,7 +17,7 @@ shooting_sound.set_volume(0.3)  # Adjust the volume as needed
 hit_enemy = pygame.mixer.Sound('./audio/enemy_hit.mp3')  # Replace with the path to your sound file
 hit_enemy.set_volume(0.3)  # Adjust the volume as needed
 
-
+obstacles = pygame.sprite.Group()
 
 
 # Screen dimensions
@@ -62,25 +62,34 @@ class PlayerTank(pygame.sprite.Sprite):
         self.lives = 3
         self.direction = (1, 0)  # Initially facing right
 
-    def update(self):
+
+    def update_player_movement(self):
         keys = pygame.key.get_pressed()
+        original_rect = self.rect.copy()  # Save the original position
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.speed
             self.direction = (-1, 0)  # Facing left
-            self.image = self.image_left  # Set image to left-facing tank
+            self.image = self.image_left
         elif keys[pygame.K_RIGHT]:
             self.rect.x += self.speed
             self.direction = (1, 0)  # Facing right
-            self.image = self.image_right  # Set image to right-facing tank
+            self.image = self.image_right
         elif keys[pygame.K_UP]:
             self.rect.y -= self.speed
             self.direction = (0, -1)  # Facing up
-            self.image = self.image_up  # Set image to up-facing tank
+            self.image = self.image_up
         elif keys[pygame.K_DOWN]:
             self.rect.y += self.speed
             self.direction = (0, 1)  # Facing down
-            self.image = self.image_down  # Set image to down-facing tank
+            self.image = self.image_down
 
+        # Check for collisions with obstacles
+        if pygame.sprite.spritecollideany(self, obstacles):
+            self.rect = original_rect  # Revert to the original position if there’s a collision
+
+    # In the PlayerTank class, replace the `update` method with the following:
+    def update(self):
+        self.update_player_movement()
         # Prevent the tank from moving out of the screen
         if self.rect.left < 0:
             self.rect.left = 0
@@ -111,8 +120,13 @@ class Projectile(pygame.sprite.Sprite):
         self.direction = direction  # direction should be a tuple like (1, 0) for right
 
     def update(self):
+        # Move projectile
         self.rect.x += self.direction[0] * self.speed
         self.rect.y += self.direction[1] * self.speed
+
+        # Check for collision with obstacles
+        if pygame.sprite.spritecollideany(self, obstacles):
+            self.kill()  # Destroy projectile on hit
 
         # Remove projectile if it goes off screen
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH or self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
@@ -132,27 +146,25 @@ class EnemyTank(pygame.sprite.Sprite):
 
         self.speed = 3 + level  # Increase speed based on level
         self.health = 1 if level == 1 else 2  # 1 hit to kill in level 1, 2 hits in level 2
-
-        # Random initial movement direction
-        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # right, left, down, up
-        self.change_direction_timer = 0  # Timer to change direction
-
+        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # Random initial movement direction
+        
     def update(self):
-        # Change direction randomly after a set time
-        self.change_direction_timer += 1
-        if self.change_direction_timer > random.randint(30, 90):  # Change direction every 30 to 90 frames
-            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
-            self.change_direction_timer = 0
+        original_rect = self.rect.copy()  # Save the original position
 
         # Update position based on direction
         self.rect.x += self.direction[0] * self.speed
         self.rect.y += self.direction[1] * self.speed
+
+        # Check for collisions with obstacles
+        if pygame.sprite.spritecollideany(self, obstacles):
+            self.rect = original_rect  # Revert to the original position if there’s a collision
 
         # Prevent the enemy from moving out of the screen
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.direction = (-self.direction[0], self.direction[1])  # Reverse direction on x-axis
         if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.direction = (self.direction[0], -self.direction[1])  # Reverse direction on y-axis
+
 
     def hit(self):
         """Decrease health and return True if enemy is killed."""
@@ -190,6 +202,22 @@ class BossEnemy(EnemyTank):
         self.image = pygame.transform.scale(self.image_normal, (50, 50))  # Scale the normal image
         self.rect = self.image.get_rect()
 
+    def update(self):
+        original_rect = self.rect.copy()  # Save the original position
+
+        # Update position based on direction
+        self.rect.x += self.direction[0] * self.speed
+        self.rect.y += self.direction[1] * self.speed
+
+        # Check for collisions with obstacles
+        if pygame.sprite.spritecollideany(self, obstacles):
+            self.rect = original_rect  # Revert to the original position if there’s a collision
+
+        # Prevent the boss from moving out of the screen
+        if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.direction = (-self.direction[0], self.direction[1])  # Reverse direction on x-axis
+        if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
+            self.direction = (self.direction[0], -self.direction[1])  # Reverse direction on y-axis
 
 def game_loop():
     # Initialize variables for level management
@@ -210,7 +238,7 @@ def game_loop():
 
     projectiles = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
-    obstacles = pygame.sprite.Group()
+  
     boss = None
     score = 0
     running = True
