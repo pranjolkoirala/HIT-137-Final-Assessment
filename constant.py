@@ -16,9 +16,9 @@ YELLOW = (255, 255, 0)
 OBSTACLE_COORDINATES= [[150, 300],[200, 300],[250, 300],[550, 300],[600, 300],[650, 300],[400, 100],[400, 150],[400, 450],[400, 500]]
 
 # Number of Enemies for each level
-ENEMIES_IN_LEVEL_1= 1
-ENEMIES_IN_LEVEL_2 = 2
-ENEMIES_IN_LEVEL_3=3
+ENEMIES_IN_LEVEL_1 = 2
+ENEMIES_IN_LEVEL_2 = 5
+ENEMIES_IN_LEVEL_3 = 6
 
 #Number of hits boss can take before it dies
 BOSS_HEALTH=4
