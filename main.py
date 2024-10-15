@@ -4,6 +4,22 @@ import random
 # Initialize Pygame
 pygame.init()
 
+#Background music
+pygame.mixer.music.load('./audio/background_music.mp3')  
+pygame.mixer.music.set_volume(0.2) # Set volume to 20% of its full level
+pygame.mixer.music.play(-1)  # Loop the music indefinitely
+
+# Shooting Sound
+shooting_sound = pygame.mixer.Sound('./audio/gun_sound.mp3')  # Replace with the path to your sound file
+shooting_sound.set_volume(0.3)  # Adjust the volume as needed
+
+# Hitting Enemy Sound
+hit_enemy = pygame.mixer.Sound('./audio/enemy_hit.mp3')  # Replace with the path to your sound file
+hit_enemy.set_volume(0.3)  # Adjust the volume as needed
+
+
+
+
 # Screen dimensions
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -33,10 +49,10 @@ class PlayerTank(pygame.sprite.Sprite):
         self.image_down = pygame.image.load('./images/tank_down.png').convert_alpha()
 
         # Scale images to appropriate size
-        self.image_right = pygame.transform.scale(self.image_right, (50, 30))
-        self.image_left = pygame.transform.scale(self.image_left, (50, 30))
-        self.image_up = pygame.transform.scale(self.image_up, (50, 30))
-        self.image_down = pygame.transform.scale(self.image_down, (50, 30))
+        self.image_right = pygame.transform.scale(self.image_right, (50, 40))
+        self.image_left = pygame.transform.scale(self.image_left, (50, 40))
+        self.image_up = pygame.transform.scale(self.image_up, (50, 40))
+        self.image_down = pygame.transform.scale(self.image_down, (50, 40))
 
         self.image = self.image_right  # Set the initial image
         self.rect = self.image.get_rect()
@@ -75,7 +91,13 @@ class PlayerTank(pygame.sprite.Sprite):
         if self.rect.bottom > SCREEN_HEIGHT:
             self.rect.bottom = SCREEN_HEIGHT
 
-
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.image = pygame.Surface((50, 50))  # Size of the obstacle
+        self.image.fill((139, 69, 19))  # Brown color for the obstacle
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)  # Set position of the obstacle
 
 
 class Projectile(pygame.sprite.Sprite):
@@ -136,6 +158,7 @@ class EnemyTank(pygame.sprite.Sprite):
         """Decrease health and return True if enemy is killed."""
         self.health -= 1
         if self.health <= 0:
+            hit_enemy.play()
             self.kill()  # Remove enemy if health is 0
             return True  # Indicate that the enemy was killed
         else:
@@ -178,21 +201,31 @@ def game_loop():
     enemies_killed = 0
     total_enemies = enemies_per_level_1  # Start with Level 1 enemy count
     
+
+    # Background Image
+    background_image = pygame.image.load('./images/background.png').convert()   
+    
     player = PlayerTank(100, SCREEN_HEIGHT - 50)
     player_group = pygame.sprite.Group(player)
 
     projectiles = pygame.sprite.Group()
     enemies = pygame.sprite.Group()
+    obstacles = pygame.sprite.Group()
     boss = None
-
+    score = 0
+    running = True
+    game_over = False
     # Create initial enemies for level 1
     for _ in range(total_enemies):
         enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level)
         enemies.add(enemy)
 
-    score = 0
-    running = True
-    game_over = False
+    
+
+    # Add some obstacles at specific positions (x, y)
+    obstacles.add(Obstacle(300, 200))
+    obstacles.add(Obstacle(500, 300))
+    obstacles.add(Obstacle(200, 400))
 
     while running:
         for event in pygame.event.get():
@@ -203,6 +236,9 @@ def game_loop():
                     # Create a projectile that fires in the direction the tank is facing
                     projectile = Projectile(player.rect.centerx, player.rect.centery, player.direction)
                     projectiles.add(projectile)
+                    # play the shooting sound
+                    shooting_sound.play()
+
 
                 # Jump to Level 3 if '1' is pressed
                 if event.key == pygame.K_1:
@@ -263,10 +299,11 @@ def game_loop():
                     enemies.add(enemy)
 
         # Draw everything
-        screen.fill(BLACK)  # Clear screen with black color
+        screen.blit(background_image, (0, 0))  # Draw the background image
         player_group.draw(screen)
         projectiles.draw(screen)
         enemies.draw(screen)
+        obstacles.draw(screen) 
 
         # Display score
         font = pygame.font.Font(None, 36)
