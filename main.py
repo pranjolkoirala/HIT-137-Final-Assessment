@@ -124,8 +124,8 @@ def game_loop():
                     boss = None  # Remove the boss
 
             # Check if all enemies are killed to proceed to the next level
-            if len(enemies) == 0 :  # Level 3 does not have a next level
-                if level<3 :
+            if len(enemies) == 0 :  
+                if level < 3 : # Level 3 does not have a next level
                     pygame.time.wait(1000)  # Wait for 1 second before transitioning to the next level
                     level += 1
                     if level == 2:
@@ -165,6 +165,8 @@ def game_loop():
         if game_over:
             game_over_text = font.render(GAME_OVER_TEXT, True, WHITE)
             screen.blit(game_over_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT // 2))
+            control_text = font.render("Use arrows to move and space to shoot.", True, WHITE)
+            screen.blit(control_text, (SCREEN_WIDTH // 2 - 200, SCREEN_HEIGHT -50 ))
 
         pygame.display.flip()  # Update the display
         clock.tick(FPS)  # Limit frame rate
