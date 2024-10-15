@@ -103,8 +103,8 @@ class PlayerTank(pygame.sprite.Sprite):
 class Obstacle(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.Surface((50, 50))  # Size of the obstacle
-        self.image.fill((139, 69, 19))  # Brown color for the obstacle
+        self.image = pygame.image.load('./images/wall.png').convert_alpha()
+        self.image = pygame.transform.scale(self.image, (50, 50))  # Scale the normal image
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)  # Set position of the obstacle
 
@@ -146,10 +146,20 @@ class EnemyTank(pygame.sprite.Sprite):
 
         self.speed = 3 + level  # Increase speed based on level
         self.health = 1 if level == 1 else 2  # 1 hit to kill in level 1, 2 hits in level 2
-        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # Random initial movement direction
-        
+
+        # Random initial movement direction
+        self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # right, left, down, up
+        self.change_direction_timer = 0  # Timer to change direction
+
     def update(self):
-        original_rect = self.rect.copy()  # Save the original position
+        # Change direction randomly after a set time
+        self.change_direction_timer += 1
+        if self.change_direction_timer > random.randint(30, 90):  # Change direction every 30 to 90 frames
+            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
+            self.change_direction_timer = 0
+
+        # Save the original position in case of collision
+        original_rect = self.rect.copy()
 
         # Update position based on direction
         self.rect.x += self.direction[0] * self.speed
@@ -157,14 +167,14 @@ class EnemyTank(pygame.sprite.Sprite):
 
         # Check for collisions with obstacles
         if pygame.sprite.spritecollideany(self, obstacles):
-            self.rect = original_rect  # Revert to the original position if there’s a collision
+            self.rect = original_rect  # Revert to the original position
+            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # Change to a new random direction
 
         # Prevent the enemy from moving out of the screen
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.direction = (-self.direction[0], self.direction[1])  # Reverse direction on x-axis
         if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
             self.direction = (self.direction[0], -self.direction[1])  # Reverse direction on y-axis
-
 
     def hit(self):
         """Decrease health and return True if enemy is killed."""
@@ -203,7 +213,14 @@ class BossEnemy(EnemyTank):
         self.rect = self.image.get_rect()
 
     def update(self):
-        original_rect = self.rect.copy()  # Save the original position
+        # Change direction randomly after a set time
+        self.change_direction_timer += 1
+        if self.change_direction_timer > random.randint(30, 90):  # Change direction every 30 to 90 frames
+            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])
+            self.change_direction_timer = 0
+
+        # Save the original position in case of collision
+        original_rect = self.rect.copy()
 
         # Update position based on direction
         self.rect.x += self.direction[0] * self.speed
@@ -211,9 +228,10 @@ class BossEnemy(EnemyTank):
 
         # Check for collisions with obstacles
         if pygame.sprite.spritecollideany(self, obstacles):
-            self.rect = original_rect  # Revert to the original position if there’s a collision
+            self.rect = original_rect  # Revert to the original position
+            self.direction = random.choice([(1, 0), (-1, 0), (0, 1), (0, -1)])  # Change to a new random direction
 
-        # Prevent the boss from moving out of the screen
+        # Prevent the enemy from moving out of the screen
         if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
             self.direction = (-self.direction[0], self.direction[1])  # Reverse direction on x-axis
         if self.rect.top < 0 or self.rect.bottom > SCREEN_HEIGHT:
@@ -223,8 +241,8 @@ def game_loop():
     # Initialize variables for level management
     level = 1
     enemies_per_level_1 = 1  # Number of enemies for Level 1
-    enemies_per_level_2 = 2  # Number of enemies for Level 2
-    enemies_per_level_3 = 3  # Number of enemies for Level 3
+    enemies_per_level_2 = 1  # Number of enemies for Level 2
+    enemies_per_level_3 = 1  # Number of enemies for Level 3
     boss_hits_required = 4  # Number of hits required to kill the boss
     enemies_killed = 0
     total_enemies = enemies_per_level_1  # Start with Level 1 enemy count
@@ -251,9 +269,19 @@ def game_loop():
     
 
     # Add some obstacles at specific positions (x, y)
-    obstacles.add(Obstacle(300, 200))
-    obstacles.add(Obstacle(500, 300))
-    obstacles.add(Obstacle(200, 400))
+    obstacles.add(Obstacle(150, 300))
+    obstacles.add(Obstacle(200, 300))
+    obstacles.add(Obstacle(250, 300))
+    obstacles.add(Obstacle(550, 300))
+    obstacles.add(Obstacle(600, 300))
+    obstacles.add(Obstacle(650, 300))
+    obstacles.add(Obstacle(400, 100))
+    obstacles.add(Obstacle(400, 150))
+    obstacles.add(Obstacle(400, 450))
+    obstacles.add(Obstacle(400, 500))
+
+
+
 
     while running:
         for event in pygame.event.get():
@@ -319,12 +347,15 @@ def game_loop():
                 if level == 2:
                     total_enemies = enemies_per_level_2
                 elif level == 3:
-                    total_enemies = enemies_per_level_3
+                    total_enemies = enemies_per_level_3                    
                 enemies.empty()  # Clear any existing enemies
                 # Create new enemies for the next level
                 for _ in range(total_enemies):
                     enemy = EnemyTank(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level)
                     enemies.add(enemy)
+                if level==3:
+                    boss = BossEnemy(random.randint(100, 700), random.randint(50, SCREEN_HEIGHT - 50), level, boss_hits_required) 
+                    enemies.add(boss)
 
         # Draw everything
         screen.blit(background_image, (0, 0))  # Draw the background image
