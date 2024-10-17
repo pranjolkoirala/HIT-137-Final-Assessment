@@ -2,7 +2,7 @@ import pygame
 from constant import SCREEN_WIDTH, SCREEN_HEIGHT
 
 # Shooting Sound
-shooting_sound = pygame.mixer.Sound('./audio/gun_sound.mp3')  # Replace with the path to your sound file
+shooting_sound = pygame.mixer.Sound('./question_pygame/audio/gun_sound.mp3')
 shooting_sound.set_volume(0.3)  # Adjust the volume as needed
 
 

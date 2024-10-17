@@ -6,10 +6,10 @@ class PlayerTank(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
         # Load tank images
-        self.image_right = pygame.image.load('./images/tank_right.png').convert_alpha()
-        self.image_left = pygame.image.load('./images/tank_left.png').convert_alpha()
-        self.image_up = pygame.image.load('./images/tank_up.png').convert_alpha()
-        self.image_down = pygame.image.load('./images/tank_down.png').convert_alpha()
+        self.image_right = pygame.image.load('./question_pygame/images/tank_right.png').convert_alpha()
+        self.image_left = pygame.image.load('./question_pygame/images/tank_left.png').convert_alpha()
+        self.image_up = pygame.image.load('./question_pygame/images/tank_up.png').convert_alpha()
+        self.image_down = pygame.image.load('./question_pygame/images/tank_down.png').convert_alpha()
 
         # Scale images to appropriate size
         self.image_right = pygame.transform.scale(self.image_right, (50, 40))

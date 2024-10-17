@@ -15,7 +15,7 @@ from constant import SCREEN_WIDTH, SCREEN_HEIGHT,FPS,WHITE,OBSTACLE_COORDINATES,
 
 
 #Background music
-pygame.mixer.music.load('./audio/background_music.mp3')  
+pygame.mixer.music.load('./question_pygame/audio/background_music.mp3')  
 pygame.mixer.music.set_volume(0.2) # Set volume to 20% of its full level
 pygame.mixer.music.play(-1)  # Loop the music indefinitely
 
@@ -47,7 +47,7 @@ def game_loop():
     
 
     # Background Image
-    background_image = pygame.image.load('./images/background.png').convert()   
+    background_image = pygame.image.load('./question_pygame/images/background.png').convert()   
     
     player = PlayerTank(100, SCREEN_HEIGHT - 50)
     player_group = pygame.sprite.Group(player)

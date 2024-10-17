@@ -8,8 +8,8 @@ class BossEnemy(EnemyTank):
         self.image.fill((0, 0, 255))  # Different color (blue) for the boss
         self.speed = 3 + level  # Boss speed
         self.health = hits_required  # Set health based on hits required
-        self.image_normal = pygame.image.load('./images/boss.png').convert_alpha()
-        self.image_weak = pygame.image.load('./images/boss.png').convert_alpha()
+        self.image_normal = pygame.image.load('./question_pygame/images/boss.png').convert_alpha()
+        self.image_weak = pygame.image.load('./question_pygame/images/boss.png').convert_alpha()
         self.image = pygame.transform.scale(self.image_normal, (50, 50))  # Scale the normal image
         self.rect = self.image.get_rect()
 

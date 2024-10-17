@@ -3,15 +3,15 @@ import random
 from constant import SCREEN_WIDTH, SCREEN_HEIGHT,OBSTACLE_COORDINATES
 
 # Hitting Enemy Sound
-hit_enemy = pygame.mixer.Sound('./audio/enemy_hit.mp3') 
+hit_enemy = pygame.mixer.Sound('./question_pygame/audio/enemy_hit.mp3') 
 hit_enemy.set_volume(0.3)  # Adjust the volume as needed
 
 class EnemyTank(pygame.sprite.Sprite):
     def __init__(self, level):
         super().__init__()
         # Load enemy tank images
-        self.image_normal = pygame.image.load('./images/enemy.png').convert_alpha()
-        self.image_weak = pygame.image.load('./images/enemy_weak.png').convert_alpha()
+        self.image_normal = pygame.image.load('./question_pygame/images/enemy.png').convert_alpha()
+        self.image_weak = pygame.image.load('./question_pygame/images/enemy_weak.png').convert_alpha()
         x,y = get_valid_enemy_position(OBSTACLE_COORDINATES,SCREEN_WIDTH,SCREEN_HEIGHT)
         self.image = pygame.transform.scale(self.image_normal, (50, 30))  # Scale the normal image
         self.rect = self.image.get_rect()
