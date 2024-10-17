@@ -1,5 +1,5 @@
 
-# Tank Game
+# Tank Game(Question 2 Pygame)
 
 A simple tank game built using Python and Pygame, where the player controls a tank to navigate through obstacles, avoid enemies, and progress through levels. The game increases in difficulty with each level, and includes a congratulatory message upon completing the final level.
 
@@ -11,7 +11,7 @@ A simple tank game built using Python and Pygame, where the player controls a ta
 
 ## Folder Structure
 ```
-Tank-Game/
+Question 2 Pygame/
 │
 ├── classes/                  # Directory containing all the classes used in the game
 │   ├── playerTank.py             # Player class
@@ -24,7 +24,6 @@ Tank-Game/
 ├── audio                     # File containing all the game audios
 ├── images                    # File containing all the game sprites
 ├── main.py                   # Main game loop and logic
-└── README.md                 # Project description and documentation
 ```
 
 ## Prerequisites
@@ -46,7 +45,7 @@ pip install pygame
 2. Navigate to the project directory:
 
    ```bash
-   cd HIT-137-Final-Assessment
+   cd HIT-137-Final-Assessment/Question 2 Pygame
    ```
 
 3. Run the game:
