@@ -23,7 +23,6 @@ pygame.mixer.music.play(-1)  # Loop the music indefinitely
 obstacles = pygame.sprite.Group()
 
 
-
 # Create the game window
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Tank Battle Game")
